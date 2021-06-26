@@ -4,6 +4,9 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 
+const Sauce = require('./models/sauce');
+const sauce = require('./models/sauce');
+
 const app = express();
 
 //connect MongoDB Atlas
@@ -29,34 +32,60 @@ app.use(bodyParser.json());
 
 //POST request
 app.post('api/sauces', (req, res, next) => {
-    console.log(req.body); //request
-    res.status(201).json({ //response
-        message: 'Sauce created successfully!'
+    const Sauce = new Sauce({
+        title: req.body.title,
+        description: req.body.description,
+        imageUrl: req.body.imageUrl,
+        price: req.body.imageUrl,
+        userId: req.body.userId
     });
+
+    //saving sauces to database
+    sauce.save().then(
+        () => {
+            res.status(201).json({
+                message: 'Post saved successfully!'
+            });
+        }
+    ).catch(
+        (error) => {
+            res.status(400).json({
+                error: error
+            });
+        }
+    );
 });
 
-//GET request
-app.use( '/api/sauces', (req, res, next) => {
-    const stuff = [
-        {
-            _id: 'id123', 
-            title: 'sauce 1',
-            description: 'this is my first sauce',
-            imageUrl : '',
-            price : '4900',
-            userId : 'userId123',
-        },
+//GET request - retrieving SINGLE sauce
+app.get('/api/sauces:id', (req, res, next) => { //colon is placed in front of id to say that it is dynamic (will change)
+    Sauce.findOne({
+        _id: req.params.id
+    }).then(
+        (sauce) => {
+            res.status(200).json(sauce);
+        }
+    ).catch(
+        (error) => {
+            res.status(400).json({
+                error: error
+            });
+        }
+    );
+});
 
-        {
-            _id: 'id123', 
-            title: 'sauce 2',
-            description: 'this is my second sauce',
-            imageUrl : '',
-            price : '4900',
-            userId : 'userId123',
-        },   
-    ];
-    res.status(200).json(stuff);
+//GET request - retrieving LIST of sauces
+app.use( '/api/sauces', (req, res, next) => {
+    Sauce.find().then( //'find' returns array
+        (sauces) => {
+            res.status(200).json(things);
+        }
+    ).catch(
+        (error) => {
+            res.status(400).json({
+                error: error
+            });
+        }
+    );
 });
 
 module.exports = app;
