@@ -9,7 +9,7 @@ const sauce = require('./models/sauce');
 
 const app = express();
 
-//connect MongoDB Atlas
+//Connect MongoDB Atlas
 mongoose.connect('mongodb+srv://CallMeSid:ECQ2bUTSde9LBnP@cluster0.xewwm.mongodb.net/myFirstDatabase?retryWrites=true&w=majority')
     .then(() => {
         console.log('Successfully connected to MongoDB Atlas!');
@@ -19,7 +19,7 @@ mongoose.connect('mongodb+srv://CallMeSid:ECQ2bUTSde9LBnP@cluster0.xewwm.mongodb
         console.error(error);
     });
 
-//add headers to response object
+//Add headers to response object
 app.use((req, res, next) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content, Accept, Content-Type, Authorization');
@@ -27,7 +27,7 @@ app.use((req, res, next) => {
   next();
 });
 
-//convert body into useable json object
+//Convert body into useable json object
 app.use(bodyParser.json());
 
 //POST request
@@ -40,7 +40,7 @@ app.post('api/sauces', (req, res, next) => {
         userId: req.body.userId
     });
 
-    //saving sauces to database
+    //SAVE sauces to database
     sauce.save().then(
         () => {
             res.status(201).json({
@@ -71,6 +71,48 @@ app.get('/api/sauces:id', (req, res, next) => { //colon is placed in front of id
             });
         }
     );
+});
+
+//UPDATE an existing sauce - CRUD
+app.put('/api/sauce/:id', (req, res, next) => {
+  const sauce = new Sauce({
+    _id: req.params.id, //stops new id being created when sauce is edited
+    title: req.body.title,
+    description: req.body.description,
+    imageUrl: req.body.imageUrl,
+    price: req.body.price,
+    userId: req.body.userId
+  });
+  Sauce.updateOne({_id: req.params.id}, sauce).then(
+    () => {
+      res.status(201).json({
+        message: 'Sauce updated successfully!'
+      });
+    }
+  ).catch(
+    (error) => {
+      res.status(400).json({
+        error: error
+      });
+    }
+  );
+});
+
+//DELETE a sauce - CRUD
+app.delete('/api/sauce/:id', (req, res, next) => {
+  Sauce.deleteOne({_id: req.params.id}).then(
+    () => {
+      res.status(200).json({
+        message: 'Deleted!'
+      });
+    }
+  ).catch(
+    (error) => {
+      res.status(400).json({
+        error: error
+      });
+    }
+  );
 });
 
 //GET request - retrieving LIST of sauces
