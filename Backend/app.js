@@ -1,9 +1,20 @@
-console.log('hey')
+//MongDB PASSWORD : ECQ2bUTSde9LBnP
 
 const express = require('express');
 const bodyParser = require('body-parser');
+const mongoose = require('mongoose');
 
 const app = express();
+
+//connect MongoDB Atlas
+mongoose.connect('mongodb+srv://CallMeSid:ECQ2bUTSde9LBnP@cluster0.xewwm.mongodb.net/myFirstDatabase?retryWrites=true&w=majority')
+    .then(() => {
+        console.log('Successfully connected to MongoDB Atlas!');
+    })
+    .catch((error) => {
+        console.log('Unable to connect to MongoDB Atlas!');
+        console.error(error);
+    });
 
 //add headers to response object
 app.use((req, res, next) => {
