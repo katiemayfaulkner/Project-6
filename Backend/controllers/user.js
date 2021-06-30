@@ -1,4 +1,5 @@
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken'); //jwt = json web token
 const User = require('../models/user');
 
 exports.signup = (req, res, next) => {
@@ -40,9 +41,13 @@ exports.login = (req, res, next) => {
               error: new Error('Incorrect password!')
             });
           }
+          const token = jwt.sign( //encode new token
+              { userId: user.id }, //token contains users id as payload
+              'RANDOM_TOKEN_SECRET', //temp dev secret string to encode token 
+              {expiresIn: '24h' }); //valid for 24h
           res.status(200).json({ // if valid, return 200 response, id, and token
             userId: user._id,
-            token: 'token'
+            token: token
           });
         }
       ).catch(
