@@ -42,7 +42,7 @@ exports.login = (req, res, next) => {
             });
           }
           const token = jwt.sign( //encode new token
-              { userId: user.id }, //token contains users id as payload
+              { userId: user._id }, //token contains users id as payload
               'RANDOM_TOKEN_SECRET', //temp dev secret string to encode token 
               {expiresIn: '24h' }); //valid for 24h
           res.status(200).json({ // if valid, return 200 response, id, and token
