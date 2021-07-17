@@ -3,6 +3,7 @@ const jwt = require('jsonwebtoken'); //jwt = json web token
 const User = require('../models/user');
 
 exports.signup = (req, res, next) => {
+
   bcrypt.hash(req.body.password, 10).then( //call bycrypt function and ask it to salt password x10 (higher value = more security)
     (hash) => {
       const user = new User({
