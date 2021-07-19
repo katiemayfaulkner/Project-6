@@ -1,4 +1,4 @@
-const http = require('http');
+const https = require('https');
 const app = require('./app');
 
 //return a valid port, whether it is provided as a number or a string
@@ -38,7 +38,7 @@ const errorHandler = error => {
   }
 };
 
-const server = http.createServer(app);
+const server = https.createServer(app);
 
 //logs the port or named pipe on which the server is running to the console
 server.on('error', errorHandler);
