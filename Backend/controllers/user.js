@@ -3,6 +3,15 @@ const jwt = require('jsonwebtoken'); //jwt = json web token
 const User = require('../models/user');
 
 exports.signup = (req, res, next) => {
+  User.findOne({ email: req.body.email }).then( //check if entered email corresponds to an existing user in database
+  (user) => {
+      if (user) { //if not, return error, if corresponds, continue
+        return res.status(401).json({
+          error: new Error('Email already in use!')
+        });
+      }
+    }
+  )
 
   bcrypt.hash(req.body.password, 10).then( //call bycrypt function and ask it to salt password x10 (higher value = more security)
     (hash) => {
