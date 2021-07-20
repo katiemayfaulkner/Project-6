@@ -11,9 +11,9 @@ const sauceSchema = mongoose.Schema({
   mainPepper: { type: String, required: true },
   heat: { type: String, required: true },
   likes: { type: Number },
-  Dislikes: { type: Number },
-  usersLiked: { type: String },
-  usersDisliked: { type: String },
+  dislikes: { type: Number },
+  usersLiked: [{ type: String }],
+  usersDisliked: [{ type: String }],
 });
 
 //export schema as mongoose model, making it available for Express app
