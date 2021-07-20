@@ -11,6 +11,10 @@ const userRoutes = require('./routes/user');
 
 const app = express();
 
+mongoose.set('useNewUrlParser', true);
+mongoose.set('useUnifiedTopology', true);
+mongoose.set('useCreateIndex', true);
+
 //Connect MongoDB Atlas
 mongoose.connect('mongodb+srv://CallMeSid:ECQ2bUTSde9LBnP@cluster0.xewwm.mongodb.net/myFirstDatabase?retryWrites=true&w=majority')
     .then(() => {
