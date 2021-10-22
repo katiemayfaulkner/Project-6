@@ -1,19 +1,27 @@
-//MongDB PASSWORD : ECQ2bUTSde9LBnP
+// Fast & minimalist web framework
+const express = require('express');
+
+// Body parsing middleware : Converts body into useable json object
 const bodyParser = require('body-parser');
+
+// Required for database (MongoDB) connection
 const mongoose = require('mongoose');
+
+// Path module : provides utilities for working with file and directory paths
 const path = require('path');
+
+// Cross origin resource sharing : allows resources on a web page to be requested from a domain outside the domain from which the first resource was served
 const cors = require('cors');
+
+// Mongoose Express error handler plugin
 const mongooseExpressErrorHandler = require('mongoose-express-error-handler');
 
-
-const express = require('express');
+// So Pekocko web app
 const app = express();
 
-app.use(mongooseExpressErrorHandler);
-
+// Access routes
 const sauceRoutes = require('./routes/sauce');
 const userRoutes = require('./routes/user');
-
 
 mongoose.set('useNewUrlParser', true);
 mongoose.set('useUnifiedTopology', true);
@@ -37,14 +45,13 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use(cors());
-
-//Convert body into useable json object
 app.use(bodyParser.json());
-
+app.use(cors());
+app.use(mongooseExpressErrorHandler);
 app.use('/images', express.static(path.join(__dirname, 'images')));
 
 app.use('/api/sauces', sauceRoutes);
 app.use('/api/auth', userRoutes);
 
+// Exporting the web application
 module.exports = app;

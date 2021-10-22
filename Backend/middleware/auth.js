@@ -1,14 +1,21 @@
+// Secret or private key (token) generator for verification purpose
 const jwt = require('jsonwebtoken');
 
+// Secret or private key (token) verification middleware
 module.exports = (req, res, next) => {
   try { 
-    const token = req.headers.authorization.split(' ')[1]; //extract token, split it bc it also contains bearer keyword
-    const decodedToken = jwt.verify(token, 'RANDOM_TOKEN_SECRET_WHICH_IS_LONG_BECAUSE_IT_IS_MORE_SECURE'); //verify function to decode token
-    const userId = decodedToken.userId; //extract user id from token
-    if (req.body.userId && req.body.userId !== userId) { //if request contains token, compare it to one extracted from token (if diff, throw error)
+    // Extract token & split it because it also contains bearer keyword
+    const token = req.headers.authorization.split(' ')[1];
+    // Verify function to decode token
+    const decodedToken = jwt.verify(token, 'RANDOM_TOKEN_SECRET_WHICH_IS_LONG_BECAUSE_IT_IS_MORE_SECURE');
+    // Extract user id from token
+    const userId = decodedToken.userId; 
+
+    //if request contains token, compare it to the one we extracted (if different, throw error)
+    if (req.body.userId && req.body.userId !== userId) {
       throw 'Invalid user ID';
     } else {
-      next(); //pass execution using next(), if all is well
+      next();
     }
   } catch {
     res.status(401).json({

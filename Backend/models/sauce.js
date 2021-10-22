@@ -1,6 +1,7 @@
+// MongoDB object modeling tool
 const mongoose = require('mongoose');
 
-//create data scheme containing the wanted fields for each sauce
+// Data scheme containing the required fields for each sauce
 const sauceSchema = mongoose.Schema({
   name: { type: String, required: true },
   description: { type: String, required: true },
@@ -15,5 +16,5 @@ const sauceSchema = mongoose.Schema({
   usersDisliked: [{ type: String }],
 });
 
-//export schema as mongoose model, making it available for Express app
+// Export schema as mongoose model, making it available for Express app
 module.exports = mongoose.model('Sauce', sauceSchema);

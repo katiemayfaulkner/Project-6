@@ -1,3 +1,4 @@
+// Middleware for handling multimedia data (in this case images)
 const multer = require('multer');
 
 const MIME_TYPES = {
@@ -6,16 +7,16 @@ const MIME_TYPES = {
   'image/png': 'png'
 };
 
-//Create storage constant
-const storage = multer.diskStorage({ //to be passed to multer as config (contains necessary logic to tell multer where to store incoming files)
-  destination: (req, file, callback) => { //tells multer to save files in "images" folder
+// Tells multer where to store incoming files ("images" folder)
+const storage = multer.diskStorage({
+  destination: (req, file, callback) => { 
     callback(null, 'images');
   },
-  filename: (req, file, callback) => { //tells multer to use original name, but..
-    const name = file.originalname.split(' ').join('_'); // spaces become underscores
-    const extension = MIME_TYPES[file.mimetype]; // uses MIME type map constant to resolve appropriate file extension
-    callback(null, name + Date.now() + '.' + extension); // timestamp is added
+  filename: (req, file, callback) => {                      // Tells multer to use original name, but..
+    const name = file.originalname.split(' ').join('_');    // spaces become underscores
+    const extension = MIME_TYPES[file.mimetype];            // uses MIME type map to resolve appropriate file extension
+    callback(null, name + Date.now() + '.' + extension);    // timestamp is added
   }
 });
 
-module.exports = multer({storage: storage}).single('image'); // export configured multer, pass to storage constant, & handled uploads = single images
+module.exports = multer({storage: storage}).single('image');

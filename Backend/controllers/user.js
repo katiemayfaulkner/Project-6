@@ -1,11 +1,18 @@
+// Library for password hashing
 const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken'); //jwt = json web token
+
+// Secret or private key (token) generator for verification purpose
+const jwt = require('jsonwebtoken');
+
+// Import user model
 const User = require('../models/user');
 
+// Signup controller
 exports.signup = (req, res, next) => {
-  User.findOne({ email: req.body.email }).then( //check if entered email corresponds to an existing user in database
+  //Check if entered email corresponds to an existing user in database
+  User.findOne({ email: req.body.email }).then( 
   (user) => {
-      if (user) { //if not, return error, if corresponds, continue
+      if (user) {
         return res.status(401).json({
           error: new Error('Email already in use!'),
           message: 'Email already in use!'
@@ -14,13 +21,15 @@ exports.signup = (req, res, next) => {
     }
   )
 
-  bcrypt.hash(req.body.password, 10).then( //call bycrypt function and ask it to salt password x10 (higher value = more security)
+  // If no existing user is found, call bycrypt function and ask it to salt password x10 (higher value = more security)
+  bcrypt.hash(req.body.password, 10).then(
     (hash) => {
       const user = new User({
         email: req.body.email,
         password: hash
       });
-      user.save().then( //Create new user and save to database
+      // Create new user and save to database
+      user.save().then(
         () => {
           res.status(201).json({
             message: 'User added successfully!'
@@ -37,28 +46,32 @@ exports.signup = (req, res, next) => {
   );
 };
 
+// Login controller
 exports.login = (req, res, next) => {
-  User.findOne({ email: req.body.email }).then( //check if entered email corresponds to an existing user in database
+  // Check if entered email corresponds to an existing user in database
+  User.findOne({ email: req.body.email }).then(
     (user) => {
-        if (!user) { //if not, return error, if corresponds, continue
+        if (!user) {
         return res.status(401).json({
           error: new Error('User not found!'),
           message: 'User not found!'
         });
       }
-      bcrypt.compare(req.body.password, user.password).then( //compare entered password with saved hash in database
+      // Compare entered password with saved hash in database
+      bcrypt.compare(req.body.password, user.password).then(
+        // If valid, login, if invalid, return error
         (valid) => {
-          if (!valid) { //if invalid, return error, if valid, users credentials = valid
+          if (!valid) {
             return res.status(401).json({
               error: new Error('Incorrect password!'),
               message: 'Incorrect password!'
             });
           }
-          const token = jwt.sign( //encode new token
-              { userId: user._id }, //token contains users id as payload
-              'RANDOM_TOKEN_SECRET_WHICH_IS_LONG_BECAUSE_IT_IS_MORE_SECURE', //temp dev secret string to encode token 
-              {expiresIn: '24h' }); //valid for 24h
-          res.status(200).json({ // if valid, return 200 response, id, and token
+          const token = jwt.sign(
+              { userId: user._id },
+              'RANDOM_TOKEN_SECRET_WHICH_IS_LONG_BECAUSE_IT_IS_MORE_SECURE',
+              {expiresIn: '24h' });
+          res.status(200).json({
             userId: user._id,
             token: token
           });
