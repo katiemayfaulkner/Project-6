@@ -14,7 +14,7 @@ const normalizePort = val => {
   return false;
 };
 
-const port = normalizePort(process.env.PORT || 3000 ); //TODO: "·" was between the vertical lines and '3000' but was causing error
+const port = normalizePort(process.env.PORT || 3000 );
 app.set('port', port);
 
 //check for various errors and handle them appropriately — it is then registered to the server

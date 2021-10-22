@@ -7,7 +7,8 @@ exports.signup = (req, res, next) => {
   (user) => {
       if (user) { //if not, return error, if corresponds, continue
         return res.status(401).json({
-          error: new Error('Email already in use!')
+          error: new Error('Email already in use!'),
+          message: 'Email already in use!'
         });
       }
     }
@@ -41,14 +42,16 @@ exports.login = (req, res, next) => {
     (user) => {
         if (!user) { //if not, return error, if corresponds, continue
         return res.status(401).json({
-          error: new Error('User not found!')
+          error: new Error('User not found!'),
+          message: 'User not found!'
         });
       }
       bcrypt.compare(req.body.password, user.password).then( //compare entered password with saved hash in database
         (valid) => {
           if (!valid) { //if invalid, return error, if valid, users credentials = valid
             return res.status(401).json({
-              error: new Error('Incorrect password!')
+              error: new Error('Incorrect password!'),
+              message: 'Incorrect password!'
             });
           }
           const token = jwt.sign( //encode new token
