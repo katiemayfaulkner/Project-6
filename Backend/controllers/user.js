@@ -14,36 +14,48 @@ exports.signup = (req, res, next) => {
   (user) => {
       if (user) {
         return res.status(401).json({
-          error: new Error('Email already in use!'),
+          error: error,
           message: 'Email already in use!'
         });
       }
     }
   )
+  
+  const strongPassword = new RegExp('(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[^A-Za-z0-9])(?=.{8,})');
 
-  // If no existing user is found, call bycrypt function and ask it to salt password x10 (higher value = more security)
-  bcrypt.hash(req.body.password, 10).then(
-    (hash) => {
-      const user = new User({
-        email: req.body.email,
-        password: hash
-      });
-      // Create new user and save to database
-      user.save().then(
-        () => {
-          res.status(201).json({
-            message: 'User added successfully!'
-          });
-        }
-      ).catch(
-        (error) => {
-          res.status(500).json({
-            error: error
-          });
-        }
-      );
-    }
-  );
+  if(strongPassword.test(req.body.password) && req.body.password.length >= 8) {
+    // It's a strong password
+    
+    // If no existing user is found, call bycrypt function and ask it to salt password x10 (higher value = more security)
+    bcrypt.hash(req.body.password, 10).then(
+      (hash) => {
+        const user = new User({
+          email: req.body.email,
+          password: hash
+        });
+        // Create new user and save to database
+        user.save().then(
+          () => {
+            res.status(201).json({
+              message: 'User added successfully!'
+            });
+          }
+        ).catch(
+          (error) => {
+            res.status(500).json({
+              error: error
+            });
+          }
+        );
+      }
+    );
+
+  } else {
+    // It's a weak password
+    res.status(400).json({
+        message: "Weak password. Password must be at least 8 character, and contain at least one uppercase, one lowercase, one number and a special character!"
+    });
+  };
 };
 
 // Login controller
@@ -53,7 +65,7 @@ exports.login = (req, res, next) => {
     (user) => {
         if (!user) {
         return res.status(401).json({
-          error: new Error('User not found!'),
+          error: error,
           message: 'User not found!'
         });
       }
@@ -63,7 +75,7 @@ exports.login = (req, res, next) => {
         (valid) => {
           if (!valid) {
             return res.status(401).json({
-              error: new Error('Incorrect password!'),
+              error: error,
               message: 'Incorrect password!'
             });
           }

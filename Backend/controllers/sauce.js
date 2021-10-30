@@ -33,13 +33,14 @@ exports.createSauce = (req, res, next) => {
   ).catch(
     (error) => {
       res.status(400).json({
-        error: error
+        error: error,
+        message: 'Unexpected error, please try again later.'
       });
     }
   );
 };
 
-//GET : Retrieve all sauces
+// GET : Retrieve all sauces
 exports.getAllSauces = (req, res, next) => {
   Sauce.find().then( //'find' returns array of sauces
     (sauces) => {
@@ -48,13 +49,14 @@ exports.getAllSauces = (req, res, next) => {
   ).catch(
     (error) => {
       res.status(400).json({
-        error: error
+        error: error,
+        message: 'Unexpected error, please try again later.'
       });
     }
   );
 };
 
-//GET : Retrieve a sauce
+// GET : Retrieve a sauce
 exports.getOneSauce = (req, res, next) => {
   Sauce.findOne({
       _id: req.params.id,
@@ -65,7 +67,8 @@ exports.getOneSauce = (req, res, next) => {
   ).catch(
     (error) => {
       res.status(400).json({
-        error: error
+        error: error,
+        message: 'Unexpected error, please try again later.'
       });
     }
   );
@@ -105,7 +108,8 @@ exports.modifySauce = (req, res, next) => {
   ).catch(
     (error) => {
       res.status(400).json({
-        error: error
+        error: error,
+        message: 'Unexpected error, please try again later.'
       });
     }
   );
@@ -126,7 +130,8 @@ exports.deleteSauce = (req, res, next) => {
         ).catch(
           (error) => {
             res.status(400).json({
-              error: error
+              error: error,
+              message: 'Unexpected error, please try again later.'
             });
           }
         );
@@ -140,25 +145,26 @@ exports.likeSauce = (req, res, next) => {
   Sauce.findOne({ _id: req.params.id }).then
   (sauce => {
 	 // Like
-    if (req.body.like == 1) {
+    if (req.body.like === 1) {
       sauce.usersLiked.push(req.body.userId);
-      sauce.likes += req.body.like;	  
+      sauce.likes += 1;	  
     } 
-	  // Remove like
-	  else if (req.body.like == 0 && sauce.usersLiked.includes(req.body.userId)) {
+	  // Remove like, if the user exists in usersLiked
+	  else if (req.body.like === 0 && sauce.usersLiked.includes(req.body.userId)) {
       sauce.usersLiked.remove(req.body.userId);
       sauce.likes -= 1;
     } 
 	  // Dislike
-	  else if (req.body.like == -1) {
+	  else if (req.body.like === -1) {
       sauce.usersDisliked.push(req.body.userId);
       sauce.dislikes += 1;
     } 
-	  // Remove dislike
-	  else if (req.body.like == 0 && sauce.usersDisliked.includes(req.body.userId)) {
+	  // Remove dislike, if the user exists in usersDisliked
+	  else if (req.body.like === 0 && sauce.usersDisliked.includes(req.body.userId)) {
       sauce.usersDisliked.remove(req.body.userId);
       sauce.dislikes -= 1;
     }
+    
     sauce.save().then(() => {
       res.status(200).json({
         message: 'Successfully liked sauce' 
@@ -166,7 +172,8 @@ exports.likeSauce = (req, res, next) => {
     }).catch(
 	  (error) => {
       res.status(400).json({
-        error: error
+        error: error,
+        message: 'Unexpected error, please try again later.'
       });
     });
   });

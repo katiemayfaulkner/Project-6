@@ -6,7 +6,7 @@ const uniqueValidator = require('mongoose-unique-validator');
 // Data scheme containing the required fields for each user
 const userSchema = mongoose.Schema({
     email: { type: String, required : true, unique: true},
-    password: { type: String, required: true },
+    password: { type: String, required: true},
 });
 
 userSchema.plugin(uniqueValidator);
