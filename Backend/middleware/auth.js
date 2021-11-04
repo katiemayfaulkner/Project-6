@@ -11,7 +11,7 @@ module.exports = (req, res, next) => {
     // Extract user id from token
     const userId = decodedToken.userId; 
 
-    //if request contains token, compare it to the one we extracted (if different, throw error)
+    // if request contains token, compare it to the one we extracted (if different, throw error)
     if (req.body.userId && req.body.userId !== userId) {
       throw 'Invalid user ID';
     } else {

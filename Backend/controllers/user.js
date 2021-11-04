@@ -23,10 +23,10 @@ exports.signup = (req, res, next) => {
   
   const strongPassword = new RegExp('(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[^A-Za-z0-9])(?=.{8,})');
 
+  // If it's a strong password..
   if(strongPassword.test(req.body.password) && req.body.password.length >= 8) {
-    // It's a strong password
     
-    // If no existing user is found, call bycrypt function and ask it to salt password x10 (higher value = more security)
+    // ..and no existing user is found, call bycrypt function and ask it to salt password x10 (higher value = more security)
     bcrypt.hash(req.body.password, 10).then(
       (hash) => {
         const user = new User({
@@ -51,7 +51,7 @@ exports.signup = (req, res, next) => {
     );
 
   } else {
-    // It's a weak password
+    // It's a weak password, throw error and alert user
     res.status(400).json({
         message: "Weak password. Password must be at least 8 character, and contain at least one uppercase, one lowercase, one number and a special character!"
     });
